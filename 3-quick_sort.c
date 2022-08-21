@@ -1,73 +1,73 @@
 #include "sort.h"
-
 /**
- * swap - swaps 2 int values
- * @array: the integer array to sort
- * @size: the size of the array
- * @a: address of first value
- * @b: address of second value
- * Return: void
- */
-void swap(int *array, size_t size, int *a, int *b)
-{
-	if (*a != *b)
-	{
-		*a = *a + *b;
-		*b = *a - *b;
-		*a = *a - *b;
-		print_array((const int *)array, size);
-	}
-}
-
-/**
- * lomuto_partition - partitions the array
- * @array: the integer array to sort
- * @size: the size of the array
- * @lo: the low index of the sort range
- * @hi: the high index of the sort range
- * Return: void
- */
-size_t lomuto_partition(int *array, size_t size, ssize_t lo, ssize_t hi)
-{
-	int i, j, pivot = array[hi];
-
-	for (i = j = lo; j < hi; j++)
-		if (array[j] < pivot)
-			swap(array, size, &array[j], &array[i++]);
-	swap(array, size, &array[i], &array[hi]);
-
-	return (i);
-}
-
-/**
- * quicksort - quicksorts via Lomuto partitioning scheme
- * @array: the integer array to sort
- * @size: the size of the array
- * @lo: the low index of the sort range
- * @hi: the high index of the sort range
- * Return: void
- */
-void quicksort(int *array, size_t size, ssize_t lo, ssize_t hi)
-{
-	if (lo < hi)
-	{
-		size_t p = lomuto_partition(array, size, lo, hi);
-
-		quicksort(array, size, lo, p - 1);
-		quicksort(array, size, p + 1, hi);
-	}
-}
-
-/**
- * quick_sort - calls quicksort
- * @array: the integer array to sort
- * @size: the size of the array
- *
- * Return: void
+ * quick_sort - sorts an array with the Quicksort algorithm
+ * @array: array of ints to sort
+ * @size: size of the array
  */
 void quick_sort(int *array, size_t size)
 {
-	if (!array || !size)
+	if (size < 2)
 		return;
-	quicksort(array, size, 0, size - 1);
+
+	quick_recursion(array, 0, (int)size - 1, size);
+}
+/**
+ * quick_recursion - helper function for Quicksort
+ * @array: array to sort
+ * @left: index of the left element
+ * @right: index of the right element
+ * @size: size of the array
+ */
+void quick_recursion(int *array, int left, int right, size_t size)
+{
+	int piv;
+
+	if (left < right)
+	{
+		piv = partition(array, left, right, size);
+		quick_recursion(array, left, piv - 1, size);
+		quick_recursion(array, piv + 1, right, size);
+	}
+}
+
+/**
+ * partition - gives a piv index for Quicksort
+ * @array: array to find the piv in
+ * @left: index of the left element
+ * @right: index of the right element
+ * @size: size of the array
+ *
+ * Return: the index of the piv element
+ */
+int partition(int *array, int left, int right, size_t size)
+{
+	int tmp, i;
+	int j;
+
+	i = left - 1;
+
+	for (j = left; j < right; j++)
+	{
+		if (array[j] < array[right])
+		{
+			i++;
+			if (i != j)
+			{
+				tmp = array[i];
+				array[i] = array[j];
+				array[j] = tmp;
+				print_array(array, size);
+			}
+		}
+	}
+
+	if (array[right] < array[i + 1])
+	{
+		tmp = array[i + 1];
+		array[i + 1] = array[right];
+		array[right] = tmp;
+		print_array(array, size);
+	}
+
+	return (i + 1);
 }

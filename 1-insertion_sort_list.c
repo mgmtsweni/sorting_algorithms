@@ -1,52 +1,58 @@
 #include "sort.h"
-
 /**
- * swap - swaps 2 nodes in a doubly-linked list
- * @a: address of first node
- * @b: address of second node
- * Return: void
+ * len_list - returns the length of a linked list
+ * @h: pointer to the list
+ * Return: length of list
  */
-void swap(listint_t *a, listint_t *b)
+int len_list(listint_t *h)
 {
-	if (a->prev)
-		a->prev->next = b;
-	if (b->next)
-		b->next->prev = a;
-	a->next = b->next;
-	b->prev = a->prev;
-	a->prev = b;
-	b->next = a;
+	int len = 0;
 
+	while (h)
+	{
+		len++;
+		h = h->next;
+	}
+	return (len);
 }
-
 /**
- * insertion_sort_list - insertion sorts a doubly-linked list
- * @list: address of pointer to head node
- * Return: void
+ * insertion_sort_list - sorts a linked list with the Insert Sort algorithm
+ * @list: double pointer to the list to sort
  */
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *i, *j;
+	listint_t *curr = NULL, *one = NULL;
+	listint_t *two = NULL, *three = NULL, *four = NULL;
 
-	if (!list || !*list || !(*list)->next)
+	if (!list || !(*list) || len_list(*list) < 2)
 		return;
-	i = (*list)->next;
-	while (i)
-	{
-		j = i;
-		i = i->next;
-		while (j && j->prev)
-		{
-			if (j->prev->n > j->n)
-			{
-				swap(j->prev, j);
-				if (!j->prev)
-					*list = j;
-				print_list((const listint_t *)*list);
-			}
-			else
-				j = j->prev;
-		}
 
+	curr = *list;
+
+	while (curr)
+	{
+		if (curr->prev && curr->n < curr->prev->n)
+		{
+			one = curr->prev->prev;
+			two = curr->prev;
+			three = curr;
+			four = curr->next;
+
+			two->next = four;
+			if (four)
+				four->prev = two;
+			three->next = two;
+			three->prev = one;
+			if (one)
+				one->next = three;
+			else
+				*list = three;
+			two->prev = three;
+			curr = *list;
+			print_list(*list);
+			continue;
+		}
+		else
+			curr = curr->next;
 	}
 }
